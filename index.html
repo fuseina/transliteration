@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<head>
+<style type="text/css">
+@font-face {
+    font-family: "me_quran";
+    src: url(http://tanzil.net/res/font/org/me_quran.ttf) format("truetype");
+}
+p.customfont { 
+    font-family: "me_quran", Verdana, Tahoma;
+	font-size: 300%;
+}
+</style>
+</head>
+<body style="font-family:courier">
+    <textarea id="textToTransliterate" style="font-size: 44pt; font-family: me_quran, Verdana, Tahoma;">قُولُو</textarea>
+</p>
+<button onclick="generateTransliteration()">Transliterate</button>
+
+<p id="demo" class="customfont"></p>
+
+<script>
+    var SHADDAH = 'ّ'
+    var FATHA = 'َ'
+    var DHAMMA = 'ُ'
+    var KASRAH = 'ِ'
+    var WAW_VOWEL = 'ū'
+    var ALIF_VOWEL = 'ā'
+    var YA_VOWEL = 'ī'
+    var HAMZA = 'ء'
+
+function generateTransliteration() {
+
+    var enteredText = document.getElementById("textToTransliterate").value;
+    enteredText = fixShaddahsAndHamzasAndAlifsAndSukoons(enteredText) // want to put the shaddah before the harraka it comes with
+    console.log(enteredText)
+    var renderedText = ''
+    var previousLetter = ''
+    var currentLetter = ''
+    var nextLetter = ''
+    for (var i = 0; i < enteredText.length; i++){
+        previousLetter = currentLetter
+        currentLetter = enteredText[i]
+        console.log(currentLetter)
+        nextLetter = i+1 < enteredText.length ? enteredText[i+1] : ''
+        if(currentLetter == 'ا' && enteredText.length >=2 && enteredText[i+1] == 'ل' && i == 0 ){
+            renderedText = renderedText + 'al-'
+            i=i+1 // skip the ل
+            continue
+        }
+
+        if(currentLetter == HAMZA && i == 0 ){
+            console.log('here', currentLetter)
+            // skip first position hamzas
+            continue
+        }
+
+        if(currentLetter == SHADDAH){
+            //double the previous letter
+            renderedText = renderedText + renderedText[renderedText.length-1]
+        }
+
+        //check for waw vowel
+        if(nextLetter == 'و' && currentLetter != KASRAH && currentLetter != FATHA && previousLetter && previousLetter != KASRAH && previousLetter != FATHA){
+            if(currentLetter != DHAMMA){
+                renderedText = renderedText + translateLetter(currentLetter)
+            }
+            renderedText = renderedText + WAW_VOWEL
+            i=i+1 // skip the vowel
+            continue
+        }
+
+        //check for alif vowel
+        if(nextLetter == 'ا' && currentLetter != KASRAH && currentLetter != DHAMMA && previousLetter && previousLetter != KASRAH && previousLetter != DHAMMA){
+            console.log('here', currentLetter)
+            if(currentLetter != FATHA){
+                renderedText = renderedText + translateLetter(currentLetter)
+            }
+            renderedText = renderedText + ALIF_VOWEL
+            i=i+1 // skip the vowel
+            continue
+        }
+
+        //check for ya vowel
+            if(nextLetter == 'ي' && currentLetter != DHAMMA && currentLetter != FATHA && previousLetter && previousLetter != DHAMMA && previousLetter != FATHA){
+            if(currentLetter != KASRAH){
+                renderedText = renderedText + translateLetter(currentLetter)
+            }
+            renderedText = renderedText + YA_VOWEL
+            i=i+1 // skip the vowel
+            continue
+        }
+
+      
+        renderedText = renderedText + translateLetter(currentLetter)
+    }
+    
+	document.getElementById("demo").innerHTML = renderedText;
+}
+
+function fixShaddahsAndHamzasAndAlifsAndSukoons(inputText){
+    inputText = inputText.replaceAll('َّ', 'َّ')
+    inputText =inputText.replaceAll('ِّ','ِّ')
+    inputText =inputText.replaceAll('ُّ','ُّ')
+    inputText = inputText.replaceAll('أ', 'ء')
+    inputText = inputText.replaceAll('ؤ', 'ء')
+    inputText = inputText.replaceAll('ئ', 'ء')
+    inputText = inputText.replaceAll('ى', 'ا')
+    inputText = inputText.replaceAll('ْ', '')
+    return inputText
+}
+
+function translateLetter(arabicInputLetter){
+    var letterMap = 
+    [
+        {arabicLetter:'ء', englishRendering: 'ʾ'},
+        {arabicLetter:'ب', englishRendering: 'b'},
+        {arabicLetter:'ت', englishRendering: 't'},
+        {arabicLetter:'ث', englishRendering: 'th'},
+        {arabicLetter:'ج', englishRendering: 'j'},
+        {arabicLetter:'ح', englishRendering: 'ḥ'},
+        {arabicLetter:'خ', englishRendering: 'kh'},
+        {arabicLetter:'د', englishRendering: 'd'},
+        {arabicLetter:'ذ', englishRendering: 'dh'},
+        {arabicLetter:'ر', englishRendering: 'r'},
+        {arabicLetter:'ز', englishRendering: 'z'},
+        {arabicLetter:'س', englishRendering: 's'},
+        {arabicLetter:'ش', englishRendering: 'sh'},
+        {arabicLetter:'ص ', englishRendering: 'ṣ'},
+        {arabicLetter:'ض', englishRendering: 'ḍ'},
+        {arabicLetter:'ط', englishRendering: 'ṭ'},
+        {arabicLetter:'ظ', englishRendering: 'ẓ'},
+        {arabicLetter:'ع', englishRendering: 'ʿ'},
+        {arabicLetter:'غ', englishRendering: 'gh'},
+        {arabicLetter:'ف', englishRendering: 'f'},
+        {arabicLetter:'ق', englishRendering: 'q'},
+        {arabicLetter:'ك', englishRendering: 'k'},
+        {arabicLetter:'ل', englishRendering: 'l'},
+        {arabicLetter:'م', englishRendering: 'm'},
+        {arabicLetter:'ن', englishRendering: 'n'},
+        {arabicLetter:'ه', englishRendering: 'h'},
+        {arabicLetter:'و', englishRendering: 'w'},
+        {arabicLetter:'ي', englishRendering: 'y'},
+        {arabicLetter:'ا', englishRendering: 'a'},
+        {arabicLetter: FATHA, englishRendering: 'a'},
+        {arabicLetter: KASRAH, englishRendering: 'i'},
+        {arabicLetter:DHAMMA, englishRendering: 'u'}
+    ]
+
+    var foundElement = letterMap.find(element => element.arabicLetter == arabicInputLetter)
+    return foundElement ? foundElement.englishRendering : 'NotFound'
+
+}
+</script>
+
+
+
+</body>
+</html>
