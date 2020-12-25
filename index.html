@@ -76,7 +76,12 @@ function generateTransliteration() {
             }
             renderedText = renderedText + WAW_VOWEL
             i=i+1 // skip the vowel
+            
+            if(i<enteredText.length && enteredText[i+1] == 'ا') { // eg قالوا skip the plural alif
+                i = i + 1
+            }
             continue
+
         }
 
         //check for alif vowel
@@ -99,18 +104,10 @@ function generateTransliteration() {
             i=i+1 // skip the vowel
             continue
         }
-
-
-      
-
       
         renderedText = renderedText + translateLetter(currentLetter)
     }
 
-    if(renderedText.endsWith('ūa')){ // eg قالوا
-        renderedText = renderedText.substring(0, renderedText.length-1)
-
-    } 
     
 	document.getElementById("demo").innerHTML = renderedText;
 }
