@@ -31,81 +31,85 @@ p.customfont {
     var FATHATAYN = 'ً'
     var DHAMMATAYN = 'ٌ'
     var KASRATAYN = 'ٍ'
+    var SPACE = ' '
 
 function generateTransliteration() {
 
     var enteredText = document.getElementById("textToTransliterate").value;
     enteredText = fixShaddahsAndHamzasAndAlifsAndSukoons(enteredText) // want to put the shaddah before the harraka it comes with
-    console.log(enteredText)
     var renderedText = ''
     var previousLetter = ''
     var currentLetter = ''
     var nextLetter = ''
-    for (var i = 0; i < enteredText.length; i++){
-        previousLetter = currentLetter
-        currentLetter = enteredText[i]
-        console.log(currentLetter)
-        nextLetter = i+1 < enteredText.length ? enteredText[i+1] : ''
-        if(currentLetter == 'ا' && enteredText.length >=2 && enteredText[i+1] == 'ل' && i == 0 ){
-            renderedText = renderedText + 'al-'
-            i=i+1 // skip the ل
-            continue
-        }
+    var listOfWords = enteredText.split(SPACE)
+    for(var aWord of listOfWords) {
+        for (var i = 0; i < aWord.length; i++){
+            previousLetter = currentLetter
+            currentLetter = aWord[i]
+            console.log(currentLetter)
+            nextLetter = i+1 < aWord.length ? aWord[i+1] : ''
+            if(currentLetter == 'ا' && aWord.length >=2 && aWord[i+1] == 'ل' && i == 0 ){
+                renderedText = renderedText + 'al-'
+                i=i+1 // skip the ل
+                continue
+            }
 
-        if((currentLetter == HAMZA || currentLetter == 'ا' ) && i == 0 ){
-            console.log('here', currentLetter)
-            // skip first position hamzas and alifs
-            continue
-        }
+            if((currentLetter == HAMZA || currentLetter == 'ا' ) && i == 0 ){
+                console.log('here', currentLetter)
+                // skip first position hamzas and alifs
+                continue
+            }
 
-        if(currentLetter == FATHATAYN && nextLetter == 'ا'){
+            if(currentLetter == FATHATAYN && nextLetter == 'ا'){
+                renderedText = renderedText + translateLetter(currentLetter)
+                i=i+1 // skip the alif
+                continue
+            }
+
+            if(currentLetter == SHADDAH){
+                //double the previous letter
+                renderedText = renderedText + renderedText[renderedText.length-1]
+            }
+
+            //check for waw vowel
+            if(nextLetter == 'و' && currentLetter != KASRAH && currentLetter != FATHA && previousLetter && previousLetter != KASRAH && previousLetter != FATHA){
+                if(currentLetter != DHAMMA){
+                    renderedText = renderedText + translateLetter(currentLetter)
+                }
+                renderedText = renderedText + WAW_VOWEL
+                i=i+1 // skip the vowel
+                
+                if(i<aWord.length && aWord[i+1] == 'ا') { // eg قالوا skip the plural alif
+                    i = i + 1
+                }
+                continue
+
+            }
+
+            //check for alif vowel
+            if(nextLetter == 'ا' && currentLetter != KASRAH && currentLetter != DHAMMA && previousLetter && previousLetter != KASRAH && previousLetter != DHAMMA){
+                console.log('here', currentLetter)
+                if(currentLetter != FATHA){
+                    renderedText = renderedText + translateLetter(currentLetter)
+                }
+                renderedText = renderedText + ALIF_VOWEL
+                i=i+1 // skip the vowel
+                continue
+            }
+
+            //check for ya vowel
+            if(nextLetter == 'ي' && currentLetter != DHAMMA && currentLetter != FATHA && previousLetter && previousLetter != DHAMMA && previousLetter != FATHA){
+                if(currentLetter != KASRAH){
+                    renderedText = renderedText + translateLetter(currentLetter)
+                }
+                renderedText = renderedText + YA_VOWEL
+                i=i+1 // skip the vowel
+                continue
+            }
+        
             renderedText = renderedText + translateLetter(currentLetter)
-            i=i+1 // skip the alif
-            continue
         }
-
-        if(currentLetter == SHADDAH){
-            //double the previous letter
-            renderedText = renderedText + renderedText[renderedText.length-1]
-        }
-
-        //check for waw vowel
-        if(nextLetter == 'و' && currentLetter != KASRAH && currentLetter != FATHA && previousLetter && previousLetter != KASRAH && previousLetter != FATHA){
-            if(currentLetter != DHAMMA){
-                renderedText = renderedText + translateLetter(currentLetter)
-            }
-            renderedText = renderedText + WAW_VOWEL
-            i=i+1 // skip the vowel
-            
-            if(i<enteredText.length && enteredText[i+1] == 'ا') { // eg قالوا skip the plural alif
-                i = i + 1
-            }
-            continue
-
-        }
-
-        //check for alif vowel
-        if(nextLetter == 'ا' && currentLetter != KASRAH && currentLetter != DHAMMA && previousLetter && previousLetter != KASRAH && previousLetter != DHAMMA){
-            console.log('here', currentLetter)
-            if(currentLetter != FATHA){
-                renderedText = renderedText + translateLetter(currentLetter)
-            }
-            renderedText = renderedText + ALIF_VOWEL
-            i=i+1 // skip the vowel
-            continue
-        }
-
-        //check for ya vowel
-        if(nextLetter == 'ي' && currentLetter != DHAMMA && currentLetter != FATHA && previousLetter && previousLetter != DHAMMA && previousLetter != FATHA){
-            if(currentLetter != KASRAH){
-                renderedText = renderedText + translateLetter(currentLetter)
-            }
-            renderedText = renderedText + YA_VOWEL
-            i=i+1 // skip the vowel
-            continue
-        }
-      
-        renderedText = renderedText + translateLetter(currentLetter)
+        renderedText = renderedText + SPACE
     }
 
     
