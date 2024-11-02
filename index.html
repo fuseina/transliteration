@@ -123,7 +123,7 @@ function fixShaddahsAndHamzasAndAlifsAndSukoons(inputText){
     inputText = inputText.replaceAll('أ', 'ء')
     inputText = inputText.replaceAll('ؤ', 'ء')
     inputText = inputText.replaceAll('ئ', 'ء')
-    inputText = inputText.replaceAll('ى', 'ا')
+    //inputText = inputText.replaceAll('ى', 'ا')
     inputText = inputText.replaceAll('ْ', '')
     return inputText
 }
@@ -142,6 +142,7 @@ function translateLetter(arabicInputLetter){
         {arabicLetter:'ذ', englishRendering: 'dh'},
         {arabicLetter:'ر', englishRendering: 'r'},
         {arabicLetter:'ز', englishRendering: 'z'},
+	{arabicLetter:'ى', englishRendering: 'á'}, 
         {arabicLetter:'س', englishRendering: 's'},
         {arabicLetter:'ش', englishRendering: 'sh'},
         {arabicLetter:'ص', englishRendering: 'ṣ'},
